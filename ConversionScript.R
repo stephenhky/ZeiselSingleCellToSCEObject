@@ -26,5 +26,9 @@ cell_types<- unlist(zeisel.oridata[8,][3:(dim(zeisel.oridata)[2])])
 # creating single-cell experiment object
 zeisel.sce<- SingleCellExperiment(
   assays = list(counts=zeisel.fulldata,
-                logcounts=log2(zeisel.fulldata)+1)
+                logcounts=log2(zeisel.fulldata)+1
+                )
 )
+rownames(zeisel.sce)<- gene_names
+colnames(zeisel.sce)<- unname(unlist(zeisel.oridata[7, 3:3007]))
+zeisel.sce$cell_type1<- cell_types
