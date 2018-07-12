@@ -3,7 +3,9 @@ library(SummarizedExperiment)
 library(SingleCellExperiment)
 
 # loading original data
-zeisel.oridata<- read.csv('OriginalDataset/expression_mRNA_17-Aug-2014.txt',
+download.file('https://storage.googleapis.com/linnarsson-lab-www-blobs/blobs/cortex/expression_mRNA_17-Aug-2014.txt',
+              './expression_mRNA_17-Aug-2014.txt')
+zeisel.oridata<- read.csv('expression_mRNA_17-Aug-2014.txt',
                           header = TRUE,
                           sep = '\t',
                           quote = "",
@@ -31,4 +33,11 @@ zeisel.sce<- SingleCellExperiment(
 )
 rownames(zeisel.sce)<- gene_names
 colnames(zeisel.sce)<- unname(unlist(zeisel.oridata[7, 3:3007]))
-zeisel.sce$cell_type1<- cell_types
+zeisel.sce$cell_type<- cell_types
+
+# further wrangling
+rowData(zeisel.sce)$feature_symbol<- rownames(zeisel.sce)
+zeisel.sce<- zeisel.sce[!duplicated(rowData(zeisel.sce)$feature_symbol), ]
+
+file.remove('./expression_mRNA_17-Aug-2014.txt')
+saveRDS(zeisel.sce, 'Target/zeisel_dataset_sce.rds')
